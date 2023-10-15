@@ -32,7 +32,7 @@ extension UIView {
         snp.makeConstraints { $0.top.equalTo(view.snp.bottom).offset(offset) }
         return self
     }
-
+    
     // MARK: Sizing
     @discardableResult
     func size(_ width: CGFloat, _ height: CGFloat) -> Self {
@@ -50,7 +50,7 @@ extension UIView {
         addSubview(blurEffectView)
         return self
     }
-
+    
     // MARK: Misc
     func fullScreen() {
         guard let superview = self.superview else { return }
@@ -108,7 +108,7 @@ extension UIButton {
 
 // MARK: - UITextField Extensions
 extension UITextField {
-        
+    
     @discardableResult
     func withPlaceholder(_ placeholder: String) -> Self {
         self.placeholder = placeholder

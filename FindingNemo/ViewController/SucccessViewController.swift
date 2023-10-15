@@ -9,7 +9,7 @@ import UIKit
 
 //MARK: Properties & Deinit
 class SucccessViewController: UIViewController {
-
+    
     
     deinit {
         print("\(self) has been deinitialized")
@@ -17,13 +17,11 @@ class SucccessViewController: UIViewController {
 }
 
 
-
-
 //MARK: -ViewCycle
 extension SucccessViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
- 
+        
     }
 }
 

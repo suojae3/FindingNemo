@@ -1,17 +1,12 @@
-//
-//  ViewController.swift
-//  FindingNemo
-//
-//  Created by ㅣ on 2023/10/15.
-//
 
+//MARK: - Module
 import UIKit
 import SnapKit
 import RiveRuntime
 import FirebaseAuth
 
 
-//MARK: Properties & Deinit
+//MARK: - Properties & Deinit
 class LoginViewController: UIViewController {
     
     //1. Background
@@ -50,6 +45,7 @@ class LoginViewController: UIViewController {
 
 //MARK: - ViewCycle
 extension LoginViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -68,6 +64,7 @@ extension LoginViewController {
 //MARK: - SetupUI
 
 extension LoginViewController {
+    
     func setupUI() {
         view.addSubviews(riveView,emailTextField,passwordTextField,loginButton)
         setupConstraints()
@@ -98,6 +95,11 @@ extension LoginViewController {
 //MARK: - Button Action
 extension LoginViewController {
     @objc func loginButtonTapped() {
+        
+        guard hasValidInput else {
+            showAlertButtonTapped()
+            return
+        }
         authenticateUser()
     }
 }
@@ -106,18 +108,39 @@ extension LoginViewController {
 //MARK: - Authenticate User
 extension LoginViewController {
     
-    func authenticateUser() {
-        Auth.auth().signIn(
-            withEmail: emailTextField.text!,
-            password: passwordTextField.text!) { [weak self] authResult, error in
-                guard let self = self else { return }
-                if let error = error {
-                    return
-                }
-                
-                if authResult != nil {
-                    print("로그인 성공")
-                }
-            }
+    var hasValidInput: Bool {
+        return !(emailTextField.text?.isEmpty ?? true) && !(passwordTextField.text?.isEmpty ?? true)
     }
+    
+    private func authenticateUser() {
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+            guard let self = self else { return }
+            if let error = error {
+                self.showAlertButtonTapped()
+                print(error.localizedDescription)
+                return
+            }
+            print("Successfully logged in!")
+        }
+    }
+}
+
+
+//MARK: - Alert
+extension LoginViewController {
+    func showAlertButtonTapped() {
+        Alert.show(on: self,
+                   title: "Alert Title",
+                   message: "This is an alert with a blurred background.",
+                   actions: [
+                    AlertAction(title: "Cancel", style: .cancel, handler: nil),
+                    AlertAction(title: "OK", style: .default, handler: {
+                        print("OK pressed")
+                    })
+                   ]
+        )
+    }
+    
 }

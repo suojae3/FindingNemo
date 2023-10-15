@@ -24,6 +24,7 @@
 		081669992ADBCC4500709AA7 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 081669982ADBCC4500709AA7 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		0816699B2ADBCC4500709AA7 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 0816699A2ADBCC4500709AA7 /* FirebaseAppCheck */; };
 		0816699E2ADBCC5500709AA7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0816699D2ADBCC5500709AA7 /* FirebaseAuth */; };
+		081669A22ADBD3F700709AA7 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081669A12ADBD3F600709AA7 /* Alert.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		0816697E2ADBBC9C00709AA7 /* UIExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtension.swift; sourceTree = "<group>"; };
 		0816698B2ADBBEDD00709AA7 /* background.riv */ = {isa = PBXFileReference; lastKnownFileType = file; path = background.riv; sourceTree = "<group>"; };
 		0816698F2ADBCBC700709AA7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		081669A12ADBD3F600709AA7 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				0816697E2ADBBC9C00709AA7 /* UIExtension.swift */,
+				081669A12ADBD3F600709AA7 /* Alert.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -210,6 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				081669A22ADBD3F700709AA7 /* Alert.swift in Sources */,
 				0816697D2ADBBBCE00709AA7 /* SucccessViewController.swift in Sources */,
 				0816696D2ADBB75000709AA7 /* LoginViewController.swift in Sources */,
 				081669692ADBB75000709AA7 /* AppDelegate.swift in Sources */,

@@ -102,17 +102,13 @@ extension UIButton {
         layer.cornerRadius = radius
         return self
     }
+    
+    
 }
 
 // MARK: - UITextField Extensions
 extension UITextField {
-    
-    @discardableResult
-    func styledAsRoundedRect() -> Self {
-        borderStyle = .roundedRect
-        return self
-    }
-    
+        
     @discardableResult
     func withPlaceholder(_ placeholder: String) -> Self {
         self.placeholder = placeholder

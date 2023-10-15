@@ -9,28 +9,37 @@ import FirebaseAuth
 //MARK: - Properties & Deinit
 class LoginViewController: UIViewController {
     
+    //0 Title Label
+    private let titleLabel = UILabel()
+        .withText("Finding Nemo")
+        .withFont(40)
+        .withFontWeight(.bold)
+        .withTextColor(.black)  
+
     //1. Background
     private var viewModel = RiveViewModel(fileName: "background")
     private lazy var riveView = RiveView()
         .styledWithBlurEffect()
         .withViewModel(viewModel)
-    
+
     //2. TextField for Login
     private lazy var emailTextField = UITextField()
         .withPlaceholder("Email")
+        .styledWithBlurEffect()
     
     private lazy var passwordTextField = UITextField()
         .withPlaceholder("Password")
         .secured()
+        .styledWithBlurEffect()
     
     private lazy var loginButton = UIButton()
-        .withBackgroundColor(.white)
-        .withCornerRadius(20)
+        
         .withTitle("Login")
         .withTextColor(.black)
         .withTarget(self, action: #selector(loginButtonTapped))
-    
-    
+        .styledWithBlurEffect()
+        .withCornerRadius(20)
+
     
     //3. Firebase login setting
     private var handle: AuthStateDidChangeListenerHandle?
@@ -39,8 +48,6 @@ class LoginViewController: UIViewController {
         print("\(self) has been deinitialized")
     }
 }
-
-
 
 
 //MARK: - ViewCycle
@@ -66,7 +73,8 @@ extension LoginViewController {
 extension LoginViewController {
     
     func setupUI() {
-        view.addSubviews(riveView,emailTextField,passwordTextField,loginButton)
+        view.addSubviews(riveView,emailTextField,titleLabel,passwordTextField,loginButton)
+        view.withBackgroundImage(named: "Spline", at: CGPoint(x: 1.0, y: 0.8), size: CGSize(width: 700, height: 1000))
         setupConstraints()
     }
     
@@ -78,7 +86,11 @@ extension LoginViewController {
             .centerX()
             .centerY()
             .size(250, 40)
-        
+
+        titleLabel
+            .centerX()
+            .above(emailTextField, 50)
+
         passwordTextField
             .below(emailTextField, 20)
             .centerX()
@@ -95,7 +107,7 @@ extension LoginViewController {
 //MARK: - Button Action
 extension LoginViewController {
     @objc func loginButtonTapped() {
-        
+        print("button")
         guard hasValidInput else {
             showAlertButtonTapped()
             return
@@ -144,3 +156,4 @@ extension LoginViewController {
     }
     
 }
+

@@ -6,12 +6,6 @@ import RiveRuntime
 extension UIView {
     
     // MARK: Positioning
-    @discardableResult
-    func positionAboveTop(_ offset: CGFloat) -> Self {
-        guard let superview = self.superview else { return self }
-        snp.makeConstraints { $0.top.equalTo(superview).offset(offset) }
-        return self
-    }
     
     @discardableResult
     func centerX() -> Self {
@@ -33,6 +27,19 @@ extension UIView {
         return self
     }
     
+    @discardableResult
+    func above(_ view: UIView, _ offset: CGFloat) -> Self {
+        snp.makeConstraints { $0.bottom.equalTo(view.snp.top).offset(-offset) }
+        return self
+    }
+
+    
+    func fullScreen() {
+        guard let superview = self.superview else { return }
+        snp.makeConstraints { $0.edges.equalTo(superview) }
+    }
+    
+    
     // MARK: Sizing
     @discardableResult
     func size(_ width: CGFloat, _ height: CGFloat) -> Self {
@@ -47,27 +54,44 @@ extension UIView {
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = self.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurEffectView.isUserInteractionEnabled = false // Allow touches to pass through
         addSubview(blurEffectView)
         return self
+        
     }
     
-    // MARK: Misc
-    func fullScreen() {
-        guard let superview = self.superview else { return }
-        snp.makeConstraints { $0.edges.equalTo(superview) }
+    @discardableResult
+    func withBorder(color: UIColor, width: CGFloat) -> Self {
+        layer.borderColor = color.cgColor
+        layer.borderWidth = width
+        return self
     }
-    
-    func positionAtTop(_ offset: CGFloat) {
-        guard let superview = self.superview else { return }
-        snp.makeConstraints {
-            $0.top.equalTo(superview).offset(offset)
-            $0.centerX.equalTo(superview)
-        }
-    }
-    
+
+    //MARK: Misc
     func addSubviews(_ subviews: UIView...) {
         subviews.forEach { addSubview($0) }
     }
+    
+    @discardableResult
+    func withBackgroundImage(named imageName: String, at position: CGPoint, size: CGSize? = nil) -> Self {
+        let imageView = UIImageView(image: UIImage(named: imageName))
+        imageView.contentMode = .scaleAspectFit
+        insertSubview(imageView, at: 0)  // This ensures the image view is at the very back
+        
+        imageView.snp.makeConstraints { make in
+            make.centerX.equalTo(snp.leading).offset(bounds.size.width * position.x)
+            make.centerY.equalTo(snp.top).offset(bounds.size.height * position.y)
+            
+            if let size = size {
+                make.width.equalTo(size.width)
+                make.height.equalTo(size.height)
+            }
+        }
+        
+        return self
+    }
+
+
 }
 
 // MARK: - UIButton Extensions
@@ -100,6 +124,7 @@ extension UIButton {
     @discardableResult
     func withCornerRadius(_ radius: CGFloat) -> Self {
         layer.cornerRadius = radius
+        layer.masksToBounds = true
         return self
     }
     
@@ -136,6 +161,19 @@ extension UILabel {
         font = UIFont.systemFont(ofSize: size)
         return self
     }
+    
+    @discardableResult
+    func withFontWeight(_ weight: UIFont.Weight) -> Self {
+        font = UIFont.systemFont(ofSize: font.pointSize, weight: weight)
+        return self
+    }
+
+    @discardableResult
+    func withTextColor(_ color: UIColor) -> Self {
+        self.textColor = color
+        return self
+    }
+
 }
 
 

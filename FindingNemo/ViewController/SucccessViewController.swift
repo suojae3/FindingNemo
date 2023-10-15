@@ -6,24 +6,31 @@
 //
 
 import UIKit
+import FirebaseAuth
+
 
 //MARK: Properties & Deinit
 class SucccessViewController: UIViewController {
     
+    //1. Firebase login setting
+    private var handle: AuthStateDidChangeListenerHandle?
+
     
     deinit {
-        print("\(self) has been deinitialized")
+        print("Successfully SuccessVC has been deinitialized")
     }
 }
 
 
-//MARK: -ViewCycle
+//MARK: - ViewCycle
 extension SucccessViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
         view.backgroundColor = .yellow
+    
+    
         
     }
 }

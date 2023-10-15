@@ -15,10 +15,13 @@ extension UIView {
     }
     
     @discardableResult
-    func centerY() -> Self {
-        guard let superview = self.superview else { return self }
-        snp.makeConstraints { $0.centerY.equalTo(superview) }
-        return self
+    func centerY() -> Constraint {
+        var constraint: Constraint?
+        guard let superview = self.superview else { return constraint! }
+        snp.makeConstraints {
+            constraint = $0.centerY.equalTo(superview).constraint
+        }
+        return constraint!
     }
     
     @discardableResult
@@ -32,7 +35,7 @@ extension UIView {
         snp.makeConstraints { $0.bottom.equalTo(view.snp.top).offset(-offset) }
         return self
     }
-
+    
     
     func fullScreen() {
         guard let superview = self.superview else { return }
@@ -55,18 +58,22 @@ extension UIView {
         blurEffectView.frame = self.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         blurEffectView.isUserInteractionEnabled = false // Allow touches to pass through
-        addSubview(blurEffectView)
-        return self
         
+        if let button = self as? UIButton {
+            button.insertSubview(blurEffectView, belowSubview: button.imageView!)
+        } else {
+            insertSubview(blurEffectView, at: 0)
+        }
+        return self
     }
-    
+
     @discardableResult
     func withBorder(color: UIColor, width: CGFloat) -> Self {
         layer.borderColor = color.cgColor
         layer.borderWidth = width
         return self
     }
-
+    
     //MARK: Misc
     func addSubviews(_ subviews: UIView...) {
         subviews.forEach { addSubview($0) }
@@ -76,7 +83,7 @@ extension UIView {
     func withBackgroundImage(named imageName: String, at position: CGPoint, size: CGSize? = nil) -> Self {
         let imageView = UIImageView(image: UIImage(named: imageName))
         imageView.contentMode = .scaleAspectFit
-        insertSubview(imageView, at: 0)  // This ensures the image view is at the very back
+        insertSubview(imageView, at: 0)
         
         imageView.snp.makeConstraints { make in
             make.centerX.equalTo(snp.leading).offset(bounds.size.width * position.x)
@@ -90,8 +97,8 @@ extension UIView {
         
         return self
     }
-
-
+    
+    
 }
 
 // MARK: - UIButton Extensions
@@ -125,6 +132,21 @@ extension UIButton {
     func withCornerRadius(_ radius: CGFloat) -> Self {
         layer.cornerRadius = radius
         layer.masksToBounds = true
+        return self
+    }
+    
+    
+    @discardableResult
+    func withIcon(named iconName: String, isSystemIcon: Bool = false, pointSize: CGFloat = 20.0, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .medium) -> Self {
+        
+        if isSystemIcon {
+            let configuration = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
+            let image = UIImage(systemName: iconName, withConfiguration: configuration)
+            setImage(image, for: .normal)
+        } else {
+            let image = UIImage(named: iconName)
+            setImage(image, for: .normal)
+        }
         return self
     }
     
@@ -167,13 +189,13 @@ extension UILabel {
         font = UIFont.systemFont(ofSize: font.pointSize, weight: weight)
         return self
     }
-
+    
     @discardableResult
     func withTextColor(_ color: UIColor) -> Self {
         self.textColor = color
         return self
     }
-
+    
 }
 
 

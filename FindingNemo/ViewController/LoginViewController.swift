@@ -9,14 +9,14 @@ import FirebaseAuth
 //MARK: - Properties & Deinit
 class LoginViewController: UIViewController {
     
-    //0 Title Label
+    //0. Title Label
     private let titleLabel = UILabel()
         .withText("Finding Nemo")
         .withFont(40)
         .withFontWeight(.bold)
         .withTextColor(.black)
     
-    //1. Background
+    //1. Background animation
     private var viewModel = RiveViewModel(fileName: "background")
     private lazy var riveView = RiveView()
         .styledWithBlurEffect()
@@ -24,28 +24,35 @@ class LoginViewController: UIViewController {
     
     //2. TextField for Login
     private lazy var emailTextField = UITextField()
-        .withPlaceholder("Email")
+        .withPlaceholder("  Email")
         .styledWithBlurEffect()
     
     private lazy var passwordTextField = UITextField()
-        .withPlaceholder("Password")
+        .withPlaceholder("  Password")
         .secured()
         .styledWithBlurEffect()
     
+    //3. Button for Login
     private lazy var loginButton = UIButton()
-    
         .withTitle("Login")
         .withTextColor(.black)
         .withTarget(self, action: #selector(loginButtonTapped))
         .styledWithBlurEffect()
         .withCornerRadius(20)
     
+    //4. Button for Social Login
+    private lazy var appleLoginButton = UIButton()
+        .styledWithBlurEffect()
+        .withCornerRadius(25)
+        .withIcon(named: "apple.logo", isSystemIcon: true, pointSize: 27.0)
+        .withTarget(self, action: #selector(appleLoginButtonTapped))
+
     
-    //3. Firebase login setting
-    private var handle: AuthStateDidChangeListenerHandle?
+    //4. Keyboard Handling
+    private var emailTextFieldCenterYConstraint: Constraint?
     
     deinit {
-        print("Successfully LoginVC has been deinitialized")
+        print("Successfully LoginVC has been deinitialized!")
     }
 }
 
@@ -55,15 +62,11 @@ extension LoginViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         setupUI()
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+
+    }    
 }
 
 
@@ -72,19 +75,21 @@ extension LoginViewController {
 extension LoginViewController {
     
     func setupUI() {
-        view.addSubviews(riveView,emailTextField,titleLabel,passwordTextField,loginButton)
+        view.backgroundColor = .white
+        view.addSubviews(riveView,emailTextField,titleLabel,passwordTextField,loginButton,appleLoginButton)
         view.withBackgroundImage(named: "Spline", at: CGPoint(x: 1.0, y: 0.8), size: CGSize(width: 700, height: 1000))
         setupConstraints()
     }
     
     func setupConstraints() {
         
+        
         riveView.fullScreen()
         
         emailTextField
             .centerX()
-            .centerY()
             .size(250, 40)
+        emailTextFieldCenterYConstraint = emailTextField.centerY()
         
         titleLabel
             .centerX()
@@ -99,19 +104,29 @@ extension LoginViewController {
             .below(passwordTextField, 20)
             .centerX()
             .size(150, 40)
+        
+        appleLoginButton
+            .below(loginButton, 20)
+            .centerX()
+            .size(70, 70)
+        
     }
+    
 }
 
 
 //MARK: - Button Action
 extension LoginViewController {
     @objc func loginButtonTapped() {
-        print("button")
         guard hasValidInput else {
             showAlertButtonTapped()
             return
         }
         authenticateUser()
+    }
+    
+    @objc func appleLoginButtonTapped() {
+        
     }
 }
 
@@ -141,7 +156,7 @@ extension LoginViewController {
                 delegate.window?.rootViewController = successVC
                 present(successVC, animated: true)
             }
-        
+            
         }
     }
 }
@@ -164,3 +179,25 @@ extension LoginViewController {
     
 }
 
+
+//MARK: - Keyboard Handling
+extension LoginViewController {
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            let keyboardHeight = keyboardSize.height
+            emailTextFieldCenterYConstraint?.update(offset: -keyboardHeight/4)
+            
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        emailTextFieldCenterYConstraint?.update(offset: 0)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+}

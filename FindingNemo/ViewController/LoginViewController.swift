@@ -4,11 +4,12 @@ import UIKit
 import SnapKit
 import RiveRuntime
 import FirebaseAuth
+import AuthenticationServices
 
 
 //MARK: - Properties & Deinit
-class LoginViewController: UIViewController {
-    
+final class LoginViewController: UIViewController {
+
     //0. Title Label
     private let titleLabel = UILabel()
         .withText("Finding Nemo")
@@ -32,6 +33,7 @@ class LoginViewController: UIViewController {
         .secured()
         .styledWithBlurEffect()
     
+    
     //3. Button for Login
     private lazy var loginButton = UIButton()
         .withTitle("Login")
@@ -40,13 +42,12 @@ class LoginViewController: UIViewController {
         .styledWithBlurEffect()
         .withCornerRadius(20)
     
-    //4. Button for Social Login
     private lazy var appleLoginButton = UIButton()
         .styledWithBlurEffect()
         .withCornerRadius(25)
-        .withIcon(named: "apple.logo", isSystemIcon: true, pointSize: 27.0)
+        .withIcon(named: "apple.logo", isSystemIcon: true, pointSize: 27.0, color: .black)
         .withTarget(self, action: #selector(appleLoginButtonTapped))
-
+    
     
     //4. Keyboard Handling
     private var emailTextFieldCenterYConstraint: Constraint?
@@ -63,33 +64,29 @@ extension LoginViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
-    }    
+        addNotificationObserver()
+    }
 }
 
 
 //MARK: - SetupUI
 
-extension LoginViewController {
+private extension LoginViewController {
     
     func setupUI() {
         view.backgroundColor = .white
-        view.addSubviews(riveView,emailTextField,titleLabel,passwordTextField,loginButton,appleLoginButton)
         view.withBackgroundImage(named: "Spline", at: CGPoint(x: 1.0, y: 0.8), size: CGSize(width: 700, height: 1000))
+        view.addSubviews(riveView,emailTextField,titleLabel,passwordTextField,loginButton,appleLoginButton)
         setupConstraints()
     }
     
     func setupConstraints() {
-        
         
         riveView.fullScreen()
         
         emailTextField
             .centerX()
             .size(250, 40)
-        emailTextFieldCenterYConstraint = emailTextField.centerY()
         
         titleLabel
             .centerX()
@@ -109,14 +106,13 @@ extension LoginViewController {
             .below(loginButton, 20)
             .centerX()
             .size(70, 70)
-        
     }
-    
 }
 
 
 //MARK: - Button Action
-extension LoginViewController {
+private extension LoginViewController {
+    
     @objc func loginButtonTapped() {
         guard hasValidInput else {
             showAlertButtonTapped()
@@ -126,13 +122,21 @@ extension LoginViewController {
     }
     
     @objc func appleLoginButtonTapped() {
-        
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+
     }
 }
 
 
 //MARK: - Authenticate User
-extension LoginViewController {
+private extension LoginViewController {
     
     var hasValidInput: Bool {
         return !(emailTextField.text?.isEmpty ?? true) && !(passwordTextField.text?.isEmpty ?? true)
@@ -161,9 +165,30 @@ extension LoginViewController {
     }
 }
 
+//MARK: - Apple Social Login
+extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+
+            let userIdentifier = appleIDCredential.user
+            let fullName = appleIDCredential.fullName
+            let email = appleIDCredential.email
+            print("User id: \(userIdentifier) \n Full Name: \(String(describing: fullName)) \n Email: \(String(describing: email))")
+        }
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("Error with Apple Sign In: \(error.localizedDescription)")
+    }
+
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+
+}
 
 //MARK: - Alert
-extension LoginViewController {
+private extension LoginViewController {
     func showAlertButtonTapped() {
         Alert.show(on: self,
                    title: "Alert Title",
@@ -176,17 +201,22 @@ extension LoginViewController {
                    ]
         )
     }
-    
 }
 
 
 //MARK: - Keyboard Handling
-extension LoginViewController {
+private extension LoginViewController {
+    
+    func addNotificationObserver() {
+        emailTextFieldCenterYConstraint = emailTextField.centerY()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             let keyboardHeight = keyboardSize.height
-            emailTextFieldCenterYConstraint?.update(offset: -keyboardHeight/4)
+            emailTextFieldCenterYConstraint?.update(offset: -keyboardHeight/2)
             
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()

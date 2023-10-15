@@ -6,7 +6,6 @@ import RiveRuntime
 extension UIView {
     
     // MARK: Positioning
-    
     @discardableResult
     func centerX() -> Self {
         guard let superview = self.superview else { return self }
@@ -97,8 +96,6 @@ extension UIView {
         
         return self
     }
-    
-    
 }
 
 // MARK: - UIButton Extensions
@@ -135,22 +132,22 @@ extension UIButton {
         return self
     }
     
-    
     @discardableResult
-    func withIcon(named iconName: String, isSystemIcon: Bool = false, pointSize: CGFloat = 20.0, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .medium) -> Self {
+    func withIcon(named iconName: String, isSystemIcon: Bool = false, pointSize: CGFloat = 20.0, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .medium, color: UIColor = .black) -> Self {
         
         if isSystemIcon {
             let configuration = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
-            let image = UIImage(systemName: iconName, withConfiguration: configuration)
+            var image = UIImage(systemName: iconName, withConfiguration: configuration)
+            image = image?.withRenderingMode(.alwaysTemplate)
             setImage(image, for: .normal)
         } else {
-            let image = UIImage(named: iconName)
+            var image = UIImage(named: iconName)
+            image = image?.withRenderingMode(.alwaysTemplate)
             setImage(image, for: .normal)
         }
+        tintColor = color
         return self
     }
-    
-    
 }
 
 // MARK: - UITextField Extensions
@@ -179,11 +176,15 @@ extension UILabel {
     }
     
     @discardableResult
-    func withFont(_ size: CGFloat) -> Self {
-        font = UIFont.systemFont(ofSize: size)
+    func withFont(_ size: CGFloat, fontName: String = "System") -> Self {
+        if fontName == "System" {
+            font = UIFont.systemFont(ofSize: size)
+        } else {
+            font = UIFont(name: fontName, size: size)
+        }
         return self
     }
-    
+
     @discardableResult
     func withFontWeight(_ weight: UIFont.Weight) -> Self {
         font = UIFont.systemFont(ofSize: font.pointSize, weight: weight)

@@ -8,8 +8,7 @@ import SnapKit
 //MARK: - Properties & Deinit
 final class MyPageViewController: UIViewController {
     
-    
-    
+
 }
 
 

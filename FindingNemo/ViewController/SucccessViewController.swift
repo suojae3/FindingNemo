@@ -22,6 +22,9 @@ extension SucccessViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        view.backgroundColor = .yellow
+        
     }
 }
 

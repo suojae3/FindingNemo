@@ -25,6 +25,7 @@
 		0816699B2ADBCC4500709AA7 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 0816699A2ADBCC4500709AA7 /* FirebaseAppCheck */; };
 		0816699E2ADBCC5500709AA7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0816699D2ADBCC5500709AA7 /* FirebaseAuth */; };
 		081669A22ADBD3F700709AA7 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081669A12ADBD3F600709AA7 /* Alert.swift */; };
+		081669A52ADBF13600709AA7 /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081669A42ADBF13600709AA7 /* MyPageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,8 @@
 		0816698B2ADBBEDD00709AA7 /* background.riv */ = {isa = PBXFileReference; lastKnownFileType = file; path = background.riv; sourceTree = "<group>"; };
 		0816698F2ADBCBC700709AA7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		081669A12ADBD3F600709AA7 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		081669A32ADBEFA700709AA7 /* FindingNemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FindingNemo.entitlements; sourceTree = "<group>"; };
+		081669A42ADBF13600709AA7 /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 		081669672ADBB75000709AA7 /* FindingNemo */ = {
 			isa = PBXGroup;
 			children = (
+				081669A32ADBEFA700709AA7 /* FindingNemo.entitlements */,
 				081669822ADBBCC700709AA7 /* ViewController */,
 				081669812ADBBCBE00709AA7 /* View */,
 				081669802ADBBCA600709AA7 /* Launch */,
@@ -115,6 +119,7 @@
 			children = (
 				0816697C2ADBBBCE00709AA7 /* SucccessViewController.swift */,
 				0816696C2ADBB75000709AA7 /* LoginViewController.swift */,
+				081669A42ADBF13600709AA7 /* MyPageViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 				081669692ADBB75000709AA7 /* AppDelegate.swift in Sources */,
 				0816697F2ADBBC9C00709AA7 /* UIExtension.swift in Sources */,
 				0816696B2ADBB75000709AA7 /* SceneDelegate.swift in Sources */,
+				081669A52ADBF13600709AA7 /* MyPageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,6 +355,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FindingNemo/FindingNemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VGM28F2FH7;
@@ -375,6 +382,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FindingNemo/FindingNemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VGM28F2FH7;

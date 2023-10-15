@@ -14,14 +14,14 @@ class LoginViewController: UIViewController {
         .withText("Finding Nemo")
         .withFont(40)
         .withFontWeight(.bold)
-        .withTextColor(.black)  
-
+        .withTextColor(.black)
+    
     //1. Background
     private var viewModel = RiveViewModel(fileName: "background")
     private lazy var riveView = RiveView()
         .styledWithBlurEffect()
         .withViewModel(viewModel)
-
+    
     //2. TextField for Login
     private lazy var emailTextField = UITextField()
         .withPlaceholder("Email")
@@ -33,19 +33,19 @@ class LoginViewController: UIViewController {
         .styledWithBlurEffect()
     
     private lazy var loginButton = UIButton()
-        
+    
         .withTitle("Login")
         .withTextColor(.black)
         .withTarget(self, action: #selector(loginButtonTapped))
         .styledWithBlurEffect()
         .withCornerRadius(20)
-
+    
     
     //3. Firebase login setting
     private var handle: AuthStateDidChangeListenerHandle?
     
     deinit {
-        print("\(self) has been deinitialized")
+        print("Successfully LoginVC has been deinitialized")
     }
 }
 
@@ -62,7 +62,6 @@ extension LoginViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("View frame: \(view.frame)")
     }
     
 }
@@ -86,11 +85,11 @@ extension LoginViewController {
             .centerX()
             .centerY()
             .size(250, 40)
-
+        
         titleLabel
             .centerX()
             .above(emailTextField, 50)
-
+        
         passwordTextField
             .below(emailTextField, 20)
             .centerX()
@@ -135,6 +134,14 @@ extension LoginViewController {
                 return
             }
             print("Successfully logged in!")
+            
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let delegate = windowScene.delegate as? SceneDelegate {
+                let successVC = SucccessViewController()
+                delegate.window?.rootViewController = successVC
+                present(successVC, animated: true)
+            }
+        
         }
     }
 }

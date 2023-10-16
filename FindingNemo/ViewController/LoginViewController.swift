@@ -9,9 +9,9 @@ import AuthenticationServices
 
 //MARK: - Properties & Deinit
 final class LoginViewController: UIViewController {
-
+    
     //0. Title Label
-    private let titleLabel = UILabel()
+    private lazy var titleLabel = UILabel()
         .withText("Finding Nemo")
         .withFont(40)
         .withFontWeight(.bold)
@@ -48,9 +48,11 @@ final class LoginViewController: UIViewController {
         .withIcon(named: "apple.logo", isSystemIcon: true, pointSize: 27.0, color: .black)
         .withTarget(self, action: #selector(appleLoginButtonTapped))
     
+    private lazy var kakaoLoginButton = UIButton()
     
     //4. Keyboard Handling
     private var emailTextFieldCenterYConstraint: Constraint?
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
     
     deinit {
         print("Successfully LoginVC has been deinitialized!")
@@ -65,6 +67,8 @@ extension LoginViewController {
         super.viewDidLoad()
         setupUI()
         addNotificationObserver()
+        view.addGestureRecognizer(tapGesture)
+        
     }
 }
 
@@ -122,15 +126,7 @@ private extension LoginViewController {
     }
     
     @objc func appleLoginButtonTapped() {
-        let appleIDProvider = ASAuthorizationAppleIDProvider()
-        let request = appleIDProvider.createRequest()
-        request.requestedScopes = [.fullName, .email]
-
-        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-        authorizationController.delegate = self
-        authorizationController.presentationContextProvider = self
-        authorizationController.performRequests()
-
+        loginAppleID()
     }
 }
 
@@ -142,7 +138,7 @@ private extension LoginViewController {
         return !(emailTextField.text?.isEmpty ?? true) && !(passwordTextField.text?.isEmpty ?? true)
     }
     
-    private func authenticateUser() {
+    func authenticateUser() {
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
         
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
@@ -167,9 +163,45 @@ private extension LoginViewController {
 
 //MARK: - Apple Social Login
 extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    
+    private func loginAppleID() {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+    }
+    
+    
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-
+            
+            // Firebase authentication
+            let appleIDToken = appleIDCredential.identityToken
+            let appleIDProviderCredential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                                    idToken: String(data: appleIDToken!, encoding: .utf8) ?? "",
+                                                                    rawNonce: nil)
+            
+            Auth.auth().signIn(with: appleIDProviderCredential) { (authResult, error) in
+                if let error = error {
+                    print("Error authenticating with Firebase: \(error.localizedDescription)")
+                    return
+                }
+                
+                // Successfully authenticated with Firebase
+                print("Successfully authenticated with Firebase using Apple Sign In!")
+                
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let delegate = windowScene.delegate as? SceneDelegate {
+                    let successVC = SucccessViewController()
+                    delegate.window?.rootViewController = successVC
+                    self.present(successVC, animated: true)
+                }
+            }
+            
             let userIdentifier = appleIDCredential.user
             let fullName = appleIDCredential.fullName
             let email = appleIDCredential.email
@@ -180,11 +212,12 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         print("Error with Apple Sign In: \(error.localizedDescription)")
     }
-
+    
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        
         return self.view.window!
     }
-
+    
 }
 
 //MARK: - Alert
@@ -211,6 +244,10 @@ private extension LoginViewController {
         emailTextFieldCenterYConstraint = emailTextField.centerY()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {

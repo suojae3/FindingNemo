@@ -1,6 +1,9 @@
 import UIKit
 import SnapKit
 import RiveRuntime
+import FirebaseAuth
+
+
 
 // MARK: - UIView Extensions
 extension UIView {
@@ -203,8 +206,8 @@ extension UILabel {
 //MARK: - RiveView extension
 extension RiveView {
     func withViewModel(_ viewModel: RiveViewModel) -> RiveView {
+        isUserInteractionEnabled = false
         viewModel.setView(self)
         return self
     }
 }
-

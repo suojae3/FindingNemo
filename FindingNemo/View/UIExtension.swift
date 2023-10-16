@@ -54,12 +54,12 @@ extension UIView {
     
     // MARK: Styling
     @discardableResult
-    func styledWithBlurEffect() -> Self {
+    func withBlurEffect() -> Self {
         let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = self.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurEffectView.isUserInteractionEnabled = false // Allow touches to pass through
+        blurEffectView.isUserInteractionEnabled = false 
         
         if let button = self as? UIButton {
             button.insertSubview(blurEffectView, belowSubview: button.imageView!)

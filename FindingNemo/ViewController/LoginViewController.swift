@@ -20,18 +20,18 @@ final class LoginViewController: UIViewController {
     //1. Background animation
     private var viewModel = RiveViewModel(fileName: "background")
     private lazy var riveView = RiveView()
-        .styledWithBlurEffect()
+        .withBlurEffect()
         .withViewModel(viewModel)
     
     //2. TextField for Login
     private lazy var emailTextField = UITextField()
         .withPlaceholder("  Email")
-        .styledWithBlurEffect()
+        .withBlurEffect()
     
     private lazy var passwordTextField = UITextField()
         .withPlaceholder("  Password")
         .secured()
-        .styledWithBlurEffect()
+        .withBlurEffect()
     
     
     //3. Button for Login
@@ -39,11 +39,11 @@ final class LoginViewController: UIViewController {
         .withTitle("Login")
         .withTextColor(.black)
         .withTarget(self, action: #selector(loginButtonTapped))
-        .styledWithBlurEffect()
+        .withBlurEffect()
         .withCornerRadius(20)
     
     private lazy var appleLoginButton = UIButton()
-        .styledWithBlurEffect()
+        .withBlurEffect()
         .withCornerRadius(25)
         .withIcon(named: "apple.logo", isSystemIcon: true, pointSize: 27.0, color: .black)
         .withTarget(self, action: #selector(appleLoginButtonTapped))
@@ -52,7 +52,6 @@ final class LoginViewController: UIViewController {
     
     //4. Keyboard Handling
     private var emailTextFieldCenterYConstraint: Constraint?
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
     
     deinit {
         print("Successfully LoginVC has been deinitialized!")
@@ -65,11 +64,16 @@ extension LoginViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+
         setupUI()
         addNotificationObserver()
         view.addGestureRecognizer(tapGesture)
+
         
     }
+    
+    
 }
 
 
@@ -191,7 +195,6 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
                     return
                 }
                 
-                // Successfully authenticated with Firebase
                 print("Successfully authenticated with Firebase using Apple Sign In!")
                 
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -247,6 +250,7 @@ private extension LoginViewController {
     }
     
     @objc func dismissKeyboard() {
+        print("Succefully \(#function)")
         view.endEditing(true)
     }
     

@@ -5,11 +5,8 @@ struct AlertAction {
     var style: UIAlertAction.Style
     var handler: (() -> Void)?
 }
+struct Alert {
 
-class Alert {
-    
-    private init() {}
-    
     static func show(on viewController: UIViewController,
                      title: String?,
                      message: String?,
